@@ -21,6 +21,21 @@
         h3 {
             margin-bottom: 0;
         }
+		
+		h3.center {
+			text-align: center;
+		}
+		
+		form div {
+			width: 155px;
+			float: left;
+		}
+		
+		form:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 
         .palette span {
             display: inline-block;
@@ -39,29 +54,23 @@
             display: inline-block;
             width: 50%;
             height: 100%;
+			margin: 0;
+			padding: 0;
         }
+		
+		.actual div,
+		.nearest div {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			white-space: pre;
+			text-align: center;
+			font-size: 1.2em;
+		}
+		
 
-        .actual:before {
-            position: absolute;
-            display: block;
-            content: "Actual";
-            top: calc(50% - 10px);
-            left: 0;
-            right: 0;
-            line-height: 20px;
-            text-align: center;
-        }
 
-        .nearest:before {
-            position: absolute;
-            display: block;
-            content: "Nearest";
-            top: calc(50% - 10px);
-            left: 0;
-            right: 0;
-            line-height: 20px;
-            text-align: center;
-        }
     </style>
     <script src="nearestColor.js"></script>
 </head>
@@ -77,8 +86,17 @@
         </p>
 
         <form>
-            <h3>Select a color</h3>
-            <input type="color" name="color" />
+		<div>
+            <h3>Input a color hex</h3>
+            <input type="text" name="colorInput" />
+		</div>
+		<div>
+			<h3 class="center">-- or --</h3>
+		</div>
+		<div>
+			<h3>Select a color</h3>
+			<input type="color" name="colorPick" />
+		</div>
         </form>
 
         <div class="palette" id="default-palette">
@@ -86,7 +104,11 @@
         </div>
 
         <div class="sample" id="default-sample">
-            <div class="actual"></div><div class="nearest"></div>
+            <div class="actual">
+				<div>Actual</div>
+			</div><div class="nearest">
+				<div>Nearest</div>
+			</div>
         </div>
 
         <div class="palette" id="alternate-palette">
@@ -94,7 +116,11 @@
         </div>
 
         <div class="sample" id="alternate-sample">
-            <div class="actual"></div><div class="nearest"></div>
+            <div class="actual">
+				<div>Actual</div>
+			</div><div class="nearest">
+				<div>Nearest</div>
+			</div>
         </div>
 
         <!-- "Fork me on GitHub" ribbon -->
@@ -102,7 +128,8 @@
     </div>
 
     <script>
-        var colorPicker = document.querySelector('input[name="color"]');
+        var colorInput = document.querySelector('input[name="colorInput"]');
+        var colorPicker = document.querySelector('input[name="colorPick"]');
 
         function prepareSection(label, colors) {
             var palette = document.getElementById(label + '-palette'),
@@ -113,9 +140,28 @@
 
             colorPicker.addEventListener('change', function() {
                 var value = colorPicker.value;
+				if(value.charAt(0) !== '#' && value !== '') {
+					value = '#' + value;
+					colorPicker.value = value;
+				}
 
                 actual.style.backgroundColor = value;
+				actual.querySelector('div').textContent = 'Actual\r\n' + value;
                 nearest.style.backgroundColor = getColor(value);
+				nearest.querySelector('div').textContent = 'Nearest\r\n' + getColor(value);
+            });
+			
+			colorInput.addEventListener('change', function() {
+                var value = colorInput.value;
+				if(value.charAt(0) !== '#' && value !== '') {
+					value = '#' + value;
+					colorPicker.value = value;
+				}
+
+                actual.style.backgroundColor = value;
+				actual.querySelector('div').textContent = 'Actual\r\n' + value;
+                nearest.style.backgroundColor = getColor(value);
+				nearest.querySelector('div').textContent = 'Nearest\r\n' + getColor(value);
             });
 
             colors.forEach(function(color) {
@@ -128,12 +174,17 @@
         prepareSection('default', nearestColor.DEFAULT_COLORS);
 
         prepareSection('alternate', [
-            '#7EB5D6',
-            '#2A75A9',
-            '#274257',
-            '#DFC184',
-            '#8F6048',
-            '#644436'
+            '#fff',
+            '#f1f1f1',
+            '#e9ecef',
+            '#dee2e6',
+            '#ced4da',
+            '#adb5bd',
+            '#6c757d',
+            '#495057',
+            '#343a40',
+            '#212529',
+            '#000'
         ]);
     </script>
 </body>
